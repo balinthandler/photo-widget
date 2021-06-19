@@ -4,13 +4,14 @@ class StaticPagesController < ApplicationController
   def index
     flickr = Flickr.new ENV['flickr_api_key'], ENV['flickr_secret']
 
-    if params[:user_id].empty?
+    if params[:user_id] && params[:user_id].empty?
       flash[:alert] = "Please enter a valid user ID!"
-    else
+    elsif params[:user_id]
       begin
         @photos = flickr.photos.search(user_id: params[:user_id])
+        flash[:alert] = nil
       rescue Flickr::FailedResponse => e
-        @error = "Error : #{e.msg}"
+        flash[:alert] = "Error : #{e.msg}"
       end
     end
   end
